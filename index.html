@@ -1,0 +1,1692 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sneaker World - Marketplace Global de Zapatillas y Ropa</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .product-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+        }
+        .condition-new {
+            background-color: #10B981;
+        }
+        .condition-used {
+            background-color: #F59E0B;
+        }
+        .country-flag {
+            width: 24px;
+            height: 16px;
+            object-fit: cover;
+            border-radius: 2px;
+        }
+    </style>
+</head>
+<body class="bg-gray-50">
+    <!-- Header -->
+    <header class="bg-white shadow-sm sticky top-0 z-10">
+        <div class="container mx-auto px-4 py-3 flex justify-between items-center">
+            <div class="flex items-center space-x-2">
+                <img src="https://storage.googleapis.com/workspace-0f70711f-8b4e-4d94-86f1-2a93ccde5887/image/55ed0e35-aff6-4232-af47-76e0a20b6436.png" alt="Logo de Sneaker World - Zapatilla blanca sobre fondo negro con globo terráqueo" class="h-10">
+                <h1 class="text-xl font-bold text-gray-800">SNEAKER WORLD</h1>
+            </div>
+            
+            <div class="hidden md:flex space-x-6 items-center">
+                <nav class="flex space-x-6">
+                    <a href="#home" class="text-gray-700 hover:text-black font-medium">Inicio</a>
+                    <a href="#sneakers" class="text-gray-700 hover:text-black font-medium">Zapatillas</a>
+                    <a href="#clothing" class="text-gray-700 hover:text-black font-medium">Ropa</a>
+                    <a href="#sell" class="text-gray-700 hover:text-black font-medium">Vender</a>
+                    <a href="#about" class="text-gray-700 hover:text-black font-medium">Sobre Nosotros</a>
+                </nav>
+                <div class="ml-6 flex items-center space-x-4">
+                    <!-- Botón de registro (visible solo sin sesión) -->
+                    <button id="register-btn" class="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition">
+                      Registrar
+                    </button>
+                  
+                    <!-- Carrito -->
+                    <div class="relative">
+                      <button id="cart-toggle" class="relative w-14 h-10 flex items-center justify-center bg-gray-100 rounded-full hover:bg-gray-200 transition cursor-pointer">
+                        <i class="fas fa-shopping-cart text-gray-700 text-2xl"></i>
+                        <span id="cart-count" class="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full w-6 h-6 flex items-center justify-center">0</span>
+                      </button>
+                  
+                      <div id="cart-dropdown" class="absolute right-0 mt-2 w-80 bg-white rounded-md shadow-lg p-4 z-50 opacity-0 scale-95 transform transition-all duration-200 pointer-events-none max-h-[70vh] overflow-y-auto">
+                        <div id="cart-items">
+                          <p class="text-gray-500 text-center py-4">Tu carrito está vacío</p>
+                        </div>
+                        <div class="border-t border-gray-200 pt-4">
+                          <div class="flex justify-between mb-4">
+                            <span class="font-medium">Total:</span>
+                            <span id="cart-total" class="font-bold">$0.00</span>
+                          </div>
+                          <button id="checkout-btn" class="w-full bg-blue-600 text-white py-2 rounded-md">Ir a pagar</button>
+                        </div>
+                      </div>
+                    </div>
+                  
+                    <!-- 🔹 Menú de usuario (al lado del carrito) -->
+                    <div id="user-menu" class="relative hidden">
+                      <button id="user-name-btn" class="bg-gray-100 px-4 py-2 rounded-md flex items-center space-x-2 hover:bg-gray-200 transition">
+                        <i class="fas fa-user text-gray-700"></i>
+                        <span id="user-name-display" class="text-gray-700 font-medium"></span>
+                        <i class="fas fa-chevron-down text-gray-500 text-sm"></i>
+                      </button>
+                  
+                      <div id="dropdown-menu" class="absolute right-0 mt-2 bg-white rounded-md shadow-lg w-40 hidden">
+                        <button id="logout-btn" class="block w-full text-left px-4 py-2 text-gray-700 hover:bg-gray-100">Cerrar sesión</button>
+                      </div>
+                    </div>
+                  </div>
+    <div id="cart-dropdown" class="absolute right-0 mt-2 w-80 bg-white rounded-md shadow-lg p-4 z-50 opacity-0 scale-95 transform transition-all duration-200 pointer-events-none max-h-[70vh] overflow-y-auto">
+        <div id="cart-items">
+            <p class="text-gray-500 text-center py-4">Tu carrito está vacío</p>
+        </div>
+        <div class="border-t border-gray-200 pt-4">
+            <div class="flex justify-between mb-4">
+                <span class="font-medium">Total:</span>
+                <span id="cart-total" class="font-bold">$0.00</span>
+            </div>
+            <button id="checkout-btn" class="w-full bg-blue-600 text-white py-2 rounded-md">
+                Ir a pagar
+            </button>
+        </div>
+    </div>
+</div>
+<!--script de click carrito-->
+<script>
+    const cartToggle = document.getElementById('cart-toggle');
+    const cartDropdown = document.getElementById('cart-dropdown');
+
+    cartToggle.addEventListener('click', () => {
+        if(cartDropdown.classList.contains('opacity-0')) {
+            // Mostrar dropdown
+            cartDropdown.classList.remove('opacity-0', 'scale-95', 'pointer-events-none');
+            cartDropdown.classList.add('opacity-100', 'scale-100', 'pointer-events-auto');
+        } else {
+            // Ocultar dropdown
+            cartDropdown.classList.remove('opacity-100', 'scale-100', 'pointer-events-auto');
+            cartDropdown.classList.add('opacity-0', 'scale-95', 'pointer-events-none');
+        }
+    });
+</script>
+<!--termina el script-->
+
+            <button class="md:hidden text-gray-700">
+                <i class="fas fa-bars text-2xl"></i>
+            </button>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section id="home" class="bg-gray-900 text-white py-20">
+        <div class="container mx-auto px-4 flex flex-col md:flex-row items-center">
+            <div class="md:w-1/2 mb-10 md:mb-0">
+                <h2 class="text-4xl md:text-5xl font-bold mb-4">Compra y Vende Zapatillas en Todo el Mundo</h2>
+                <p class="text-xl text-gray-300 mb-8">El marketplace global para sneakerheads y amantes de la ropa deportiva de segunda mano.</p>
+                <div class="flex space-x-4">
+                    <button class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-md font-medium transition">
+                        Explorar Productos
+                    </button>
+                    <button class="bg-white hover:bg-gray-100 text-gray-900 px-6 py-3 rounded-md font-medium transition">
+                        Comenzar a Vender
+                    </button>
+                </div>
+            </div>
+            <div class="md:w-1/2 flex justify-center">
+                <img src="https://storage.googleapis.com/workspace-0f70711f-8b4e-4d94-86f1-2a93ccde5887/image/6da108f9-fce5-4d3b-917f-ffbc0f202e5d.png" alt="Colección de zapatillas premium de diferentes marcas dispuestas en forma circular con fondo blanco" class="rounded-lg shadow-xl">
+            </div>
+        </div>
+    </section>
+
+    <!-- Search & Filters -->
+    <section class="bg-white py-8 shadow-sm">
+        <div class="container mx-auto px-4">
+            <div class="bg-white p-6 rounded-lg shadow-md">
+                <div class="flex flex-col md:flex-row md:space-x-4 space-y-4 md:space-y-0">
+                    <div class="flex-1">
+                        <input type="text" placeholder="Busca zapatillas, ropa, marcas..." class="w-full px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    </div>
+                    <div class="w-full md:w-64">
+                        <select class="w-full px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                            <option value="">Todas las categorías</option>
+                            <option value="sneakers">Zapatillas</option>
+                            <option value="clothing">Ropa</option>
+                            <option value="accessories">Accesorios</option>
+                        </select>
+                    </div>
+                    <div class="w-full md:w-48">
+                        <select class="w-full px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                            <option value="">Todos los países</option>
+                            <option value="us">Estados Unidos</option>
+                            <option value="uk">Reino Unido</option>
+                            <option value="de">Alemania</option>
+                            <option value="jp">Japón</option>
+                            <option value="ar">Argentina</option>
+                            <option value="mx">México</option>
+                            <option value="es">España</option>
+                        </select>
+                    </div>
+                    <button class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-md font-medium transition whitespace-nowrap">
+                        Buscar
+                    </button>
+                </div>
+                
+                <div class="mt-4 flex flex-wrap gap-2">
+                    <div class="flex items-center">
+                        <label class="mr-2 text-gray-700">Condición:</label>
+                        <div class="flex space-x-2">
+                            <label class="inline-flex items-center">
+                                <input type="checkbox" class="rounded border-gray-300 text-blue-600 shadow-sm focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50" checked>
+                                <span class="ml-2">Nuevo</span>
+                            </label>
+                            <label class="inline-flex items-center">
+                                <input type="checkbox" class="rounded border-gray-300 text-blue-600 shadow-sm focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50" checked>
+                                <span class="ml-2">Usado</span>
+                            </label>
+                        </div>
+                    </div>
+                    
+                    <div class="flex items-center ml-4">
+                        <label class="mr-2 text-gray-700">Tallas:</label>
+                        <select class="px-3 py-1 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                            <option value="">Todas</option>
+                            <option value="36">36</option>
+                            <option value="37">37</option>
+                            <option value="38">38</option>
+                            <option value="39">39</option>
+                            <option value="40">40</option>
+                            <option value="41">41</option>
+                            <option value="42">42</option>
+                            <option value="43">43</option>
+                            <option value="44">44</option>
+                            <option value="45">45</option>
+                            <option value="46">46</option>
+                        </select>
+                    </div>
+                    
+                    <div class="flex items-center ml-4">
+                        <label class="mr-2 text-gray-700">Precio:</label>
+                        <div class="flex items-center space-x-2">
+                            <input type="number" placeholder="Min" class="w-20 px-2 py-1 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                            <span>-</span>
+                            <input type="number" placeholder="Max" class="w-20 px-2 py-1 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Featured Sneakers -->
+    <section id="sneakers" class="py-12 bg-gray-50">
+        <div class="container mx-auto px-4">
+            <div class="flex justify-between items-center mb-8">
+                <h2 class="text-3xl font-bold text-gray-800">Zapatillas Destacadas</h2>
+                <a href="#" class="text-blue-600 hover:text-blue-800 font-medium">Ver todas →</a>
+                
+            </div>
+            
+            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+                <!-- Product Card 1 -->
+  <div class="product-card bg-white rounded-lg overflow-hidden shadow-md transition duration-300">
+    <div class="relative">
+        <img src="https://storage.googleapis.com/workspace-0f70711f-8b4e-4d94-86f1-2a93ccde5887/image/ad3bfa51-7ca6-445c-a379-baeab478388c.png" 
+             alt="Zapatillas Nike Air Jordan 1 Retro High OG en color rojo y negro, fotografía profesional con fondo blanco" 
+             class="w-full h-64 object-cover">
+        <span class="absolute top-2 right-2 bg-yellow-100 text-yellow-800 text-xs px-2 py-1 rounded-full">RÁPIDO ENVÍO</span>
+        <span class="absolute bottom-2 left-2 condition-used text-white text-xs px-2 py-1 rounded-full">USADO</span>
+    </div>
+    <div class="p-4">
+        <div class="flex justify-between items-start mb-2">
+            <h3 class="font-bold text-lg text-gray-800">Nike Air Jordan 1 Retro High OG</h3>
+            <img src="https://storage.googleapis.com/workspace-0f70711f-8b4e-4d94-86f1-2a93ccde5887/image/ddd9b6b3-2e0c-45c0-b45b-ea10e19e4410.png" 
+                 alt="Bandera de Estados Unidos" class="country-flag">
+        </div>
+        <p class="text-gray-600 text-sm mb-3">Publicado hace 2 días</p>
+        <div class="flex items-center mb-3">
+            <div class="flex text-yellow-400">
+                <i class="fas fa-star"></i>
+                <i class="fas fa-star"></i>
+                <i class="fas fa-star"></i>
+                <i class="fas fa-star"></i>
+                <i class="fas fa-star-half-alt"></i>
+            </div>
+            <span class="text-gray-600 text-sm ml-1">(24)</span>
+        </div>
+    
+        <div class="flex justify-between items-center">
+            <div>
+                <span class="text-gray-500 text-sm">Talle:</span>
+                <span class="font-medium ml-1">42</span>
+            </div>
+            <div class="text-right">
+                <span class="text-gray-500 text-sm line-through">$220.00</span>
+                <p class="text-red-600 font-bold text-lg">$180.00</p>
+            </div>
+        </div>
+
+        <!-- 🔹 Botones funcionales -->
+        <div class="mt-3 flex flex-col gap-2">
+            <!-- Ver detalles -->
+            <button class="view-details w-full bg-gray-200 text-gray-800 py-2 rounded-md hover:bg-gray-300 transition"
+                data-name="Nike Air Jordan 1 Retro High OG"
+                data-price="180.00"
+                data-image="https://storage.googleapis.com/workspace-0f70711f-8b4e-4d94-86f1-2a93ccde5887/image/ad3bfa51-7ca6-445c-a379-baeab478388c.png"
+                data-size="42"
+                data-condition="USADO"
+                data-location="Estados Unidos"
+                data-date="Publicado hace 2 días"
+                data-description="Zapatillas Nike Air Jordan 1 Retro High OG en color rojo y negro. Edición original con materiales premium y suela Air clásica. Envío rápido disponible.">
+                Ver detalles
+            </button>
+
+            <!-- Añadir al carrito -->
+            <button class="add-to-cart w-full bg-blue-600 text-white py-2 rounded-md hover:bg-blue-700 transition"
+                data-name="Nike Air Jordan 1 Retro High OG"
+                data-price="180.00"
+                data-image="https://storage.googleapis.com/workspace-0f70711f-8b4e-4d94-86f1-2a93ccde5887/image/ad3bfa51-7ca6-445c-a379-baeab478388c.png"
+                data-size="42"
+                data-condition="USADO">
+                Añadir al carrito
+            </button>
+        </div>
+    </div>
+</div>
+                
+                <!-- Product Card 2 -->
+                <div class="product-card bg-white rounded-lg overflow-hidden shadow-md transition duration-300">
+    <div class="relative">
+        <img src="https://storage.googleapis.com/workspace-0f70711f-8b4e-4d94-86f1-2a93ccde5887/image/44738083-d95a-4aaa-a844-2036d85863d3.png" 
+             alt="Zapatillas Adidas Yeezy Boost 350 V2 'Zebra' en blanco y negro con detalles en rojo, vista lateral" 
+             class="w-full h-64 object-cover">
+        <span class="absolute top-2 right-2 condition-new text-white text-xs px-2 py-1 rounded-full">NUEVO</span>
+    </div>
+    <div class="p-4">
+        <div class="flex justify-between items-start mb-2">
+            <h3 class="font-bold text-lg text-gray-800">Adidas Yeezy Boost 350 V2 'Zebra'</h3>
+            <img src="https://storage.googleapis.com/workspace-0f70711f-8b4e-4d94-86f1-2a93ccde5887/image/f66c8116-c83d-4d0a-b324-0dcbe00faee8.png" 
+                 alt="Bandera de Alemania" class="country-flag">
+        </div>
+        <p class="text-gray-600 text-sm mb-3">Publicado hoy</p>
+        <div class="flex items-center mb-3">
+            <div class="flex text-yellow-400">
+                <i class="fas fa-star"></i>
+                <i class="fas fa-star"></i>
+                <i class="fas fa-star"></i>
+                <i class="fas fa-star"></i>
+                <i class="far fa-star"></i>
+            </div>
+            <span class="text-gray-600 text-sm ml-1">(15)</span>
+        </div>
+        <div class="flex justify-between items-center">
+            <div>
+                <span class="text-gray-500 text-sm">Talle:</span>
+                <span class="font-medium ml-1">40</span>
+            </div>
+            <div class="text-right">
+                <p class="text-gray-900 font-bold text-lg">$350.00</p>
+            </div>
+        </div>
+
+        <!-- 🔹 Botones funcionales -->
+        <div class="mt-3 flex flex-col gap-2">
+            <!-- Ver detalles -->
+            <button class="view-details w-full bg-gray-200 text-gray-800 py-2 rounded-md hover:bg-gray-300 transition"
+                data-name="Adidas Yeezy Boost 350 V2 'Zebra'"
+                data-price="350.00"
+                data-image="https://storage.googleapis.com/workspace-0f70711f-8b4e-4d94-86f1-2a93ccde5887/image/44738083-d95a-4aaa-a844-2036d85863d3.png"
+                data-size="40"
+                data-condition="NUEVO"
+                data-location="Alemania"
+                data-date="Publicado hoy"
+                data-description="Zapatillas Adidas Yeezy Boost 350 V2 'Zebra' en color blanco y negro con detalles en rojo. Modelo icónico de Kanye West con tecnología Boost para máximo confort. Envío internacional disponible.">
+                Ver detalles
+            </button>
+
+            <!-- Añadir al carrito -->
+            <button class="add-to-cart w-full bg-blue-600 text-white py-2 rounded-md hover:bg-blue-700 transition"
+                data-name="Adidas Yeezy Boost 350 V2 'Zebra'"
+                data-price="350.00"
+                data-image="https://storage.googleapis.com/workspace-0f70711f-8b4e-4d94-86f1-2a93ccde5887/image/44738083-d95a-4aaa-a844-2036d85863d3.png"
+                data-size="40"
+                data-condition="NUEVO">
+                Añadir al carrito
+            </button>
+        </div>
+    </div>
+</div>
+                
+                <!-- Product Card 3 -->
+                <div class="product-card bg-white rounded-lg overflow-hidden shadow-md transition duration-300">
+    <div class="relative">
+        <img src="https://storage.googleapis.com/workspace-0f70711f-8b4e-4d94-86f1-2a93ccde5887/image/54efc7fa-5b5f-4972-9cb7-c281721a93f9.png" 
+             alt="Zapatillas New Balance 550 en color verde militar con detalles en blanco, fotografía de alta calidad con fondo neutro" 
+             class="w-full h-64 object-cover">
+        <span class="absolute top-2 right-2 bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded-full">ENVÍO GRATIS</span>
+        <span class="absolute bottom-2 left-2 condition-used text-white text-xs px-2 py-1 rounded-full">USADO</span>
+    </div>
+    <div class="p-4">
+        <div class="flex justify-between items-start mb-2">
+            <h3 class="font-bold text-lg text-gray-800">New Balance 550 'Military Green'</h3>
+            <img src="https://storage.googleapis.com/workspace-0f70711f-8b4e-4d94-86f1-2a93ccde5887/image/584aa90e-f061-4f15-a203-8358d2fe6023.png" 
+                 alt="Bandera de Japón" class="country-flag">
+        </div>
+        <p class="text-gray-600 text-sm mb-3">Publicado hace 1 semana</p>
+        <div class="flex items-center mb-3">
+            <div class="flex text-yellow-400">
+                <i class="fas fa-star"></i>
+                <i class="fas fa-star"></i>
+                <i class="fas fa-star"></i>
+                <i class="fas fa-star"></i>
+                <i class="fas fa-star"></i>
+            </div>
+            <span class="text-gray-600 text-sm ml-1">(37)</span>
+        </div>
+        <div class="flex justify-between items-center">
+            <div>
+                <span class="text-gray-500 text-sm">Talle:</span>
+                <span class="font-medium ml-1">41</span>
+            </div>
+            <div class="text-right">
+                <span class="text-gray-500 text-sm line-through">$150.00</span>
+                <p class="text-red-600 font-bold text-lg">$120.00</p>
+            </div>
+        </div>
+
+        <!-- 🔹 Botones funcionales -->
+        <div class="mt-3 flex flex-col gap-2">
+            <!-- Ver detalles -->
+            <button class="view-details w-full bg-gray-200 text-gray-800 py-2 rounded-md hover:bg-gray-300 transition"
+                data-name="New Balance 550 'Military Green'"
+                data-price="120.00"
+                data-image="https://storage.googleapis.com/workspace-0f70711f-8b4e-4d94-86f1-2a93ccde5887/image/54efc7fa-5b5f-4972-9cb7-c281721a93f9.png"
+                data-size="41"
+                data-condition="USADO"
+                data-location="Japón"
+                data-date="Publicado hace 1 semana"
+                data-description="Zapatillas New Balance 550 'Military Green' en color verde militar con detalles en blanco. Diseño clásico con una mezcla de cuero y gamuza, ideales para uso diario. Envío gratuito incluido.">
+                Ver detalles
+            </button>
+
+            <!-- Añadir al carrito -->
+            <button class="add-to-cart w-full bg-blue-600 text-white py-2 rounded-md hover:bg-blue-700 transition"
+                data-name="New Balance 550 'Military Green'"
+                data-price="120.00"
+                data-image="https://storage.googleapis.com/workspace-0f70711f-8b4e-4d94-86f1-2a93ccde5887/image/54efc7fa-5b5f-4972-9cb7-c281721a93f9.png"
+                data-size="41"
+                data-condition="USADO">
+                Añadir al carrito
+            </button>
+        </div>
+    </div>
+</div>
+                
+                <!-- Product Card 4 -->
+                <div class="product-card bg-white rounded-lg overflow-hidden shadow-md transition duration-300">
+    <div class="relative">
+        <img src="https://storage.googleapis.com/workspace-0f70711f-8b4e-4d94-86f1-2a93ccde5887/image/3bcabda7-7220-4058-8432-9a54e2c2436d.png" 
+             alt="" class="w-full h-64 object-cover">
+        <span class="absolute bottom-2 left-2 condition-used text-white text-xs px-2 py-1 rounded-full">USADO</span>
+    </div>
+    <div class="p-4">
+        <div class="flex justify-between items-start mb-2">
+            <h3 class="font-bold text-lg text-gray-800">Converse Chuck 70s High Top Black</h3>
+            <img src="https://storage.googleapis.com/workspace-0f70711f-8b4e-4d94-86f1-2a93ccde5887/image/6a0056ec-9021-49a0-8d98-58da7aca0d01.png" 
+                 alt="Bandera de España" class="country-flag">
+        </div>
+        <p class="text-gray-600 text-sm mb-3">Publicado hace 3 días</p>
+         <div class="flex items-center mb-3">
+            <div class="flex text-yellow-400">
+                <i class="fas fa-star"></i>
+                <i class="fas fa-star"></i>
+                <i class="fas fa-star"></i>
+                <i class="fas fa-star-half-alt"></i>
+                <i class="far fa-star"></i>
+            </div>
+            <span class="text-gray-600 text-sm ml-1">(8)</span>
+        </div>
+
+        <div class="flex justify-between items-center">
+            <div>
+                <span class="text-gray-500 text-sm">Talle:</span>
+                <span class="font-medium ml-1">39</span>
+            </div>
+            <div class="text-right">
+                <p class="text-gray-900 font-bold text-lg">$80.00</p>
+            </div>
+        </div>
+
+        <!--Botones-->
+        <div class="mt-3 flex flex-col gap-2">
+            <button class="view-details w-full bg-gray-200 text-gray-800 py-2 rounded-md hover:bg-gray-300 transition"
+                    data-name="Converse Chuck 70s High Top Black"
+                    data-price="80.00"
+                    data-image="https://storage.googleapis.com/workspace-0f70711f-8b4e-4d94-86f1-2a93ccde5887/image/3bcabda7-7220-4058-8432-9a54e2c2436d.png"
+                    data-size="39"
+                    data-condition="USADO"
+                    data-location="España"
+                    data-date="Hace 3 días"
+                    data-description="Zapatillas Converse Chuck Taylor All Star 70s High Top en color negro, versión vintage con suela oxidada. Estado: 8/10. Envío disponible a todo el mundo.">
+                    Ver detalles
+             </button>
+
+                <button class="add-to-cart w-full bg-blue-600 text-white py-2 rounded-md hover:bg-blue-700 transition"
+                    data-name="Converse Chuck 70s High Top Black"
+                    data-price="80.00"
+                    data-image="https://storage.googleapis.com/workspace-0f70711f-8b4e-4d94-86f1-2a93ccde5887/image/3bcabda7-7220-4058-8432-9a54e2c2436d.png"
+                    data-size="39"
+                    data-condition="USADO">
+                    Añadir al carrito
+                </button>
+            </div>
+        </div>
+    </div>
+    </section>
+
+    <!-- Featured Clothing -->
+    <section id="clothing" class="py-12 bg-white">
+        <div class="container mx-auto px-4">
+            <div class="flex justify-between items-center mb-8">
+                <h2 class="text-3xl font-bold text-gray-800">Ropa Destacada</h2>
+                <a href="#" class="text-blue-600 hover:text-blue-800 font-medium">Ver todo →</a>
+            </div>
+            
+            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+                <!-- Clothing Card 1 -->
+               <div class="product-card bg-white rounded-lg overflow-hidden shadow-md transition duration-300">
+    <div class="relative">
+        <img
+            src="https://storage.googleapis.com/workspace-0f70711f-8b4e-4d94-86f1-2a93ccde5887/image/c35de0a2-21a1-4281-849e-b3e7361be10b.png"
+            alt="Hoodie Supreme Box Logo en color negro, fotografía frontal en maniquí, talla XL"
+            class="w-full h-64 object-cover"
+        >
+        <span class="absolute top-2 right-2 condition-new text-white text-xs px-2 py-1 rounded-full">
+            NUEVO
+        </span>
+    </div>
+
+    <div class="p-4">
+        <div class="flex justify-between items-start mb-2">
+            <h3 class="font-bold text-lg text-gray-800">
+                Hoodie Supreme Box Logo Black
+            </h3>
+            <img
+                src="https://storage.googleapis.com/workspace-0f70711f-8b4e-4d94-86f1-2a93ccde5887/image/0ee17172-d68b-49cc-8b10-72203e2ceaba.png"
+                alt="Bandera de Reino Unido"
+                class="country-flag"
+            >
+        </div>
+
+        <p class="text-gray-600 text-sm mb-3">
+            Publicado hace 5 días
+        </p>
+
+        <div class="flex items-center mb-3">
+            <div class="flex text-yellow-400">
+                <i class="fas fa-star"></i>
+                <i class="fas fa-star"></i>
+                <i class="fas fa-star"></i>
+                <i class="fas fa-star"></i>
+                <i class="far fa-star"></i>
+            </div>
+            <span class="text-gray-600 text-sm ml-1">(12)</span>
+        </div>
+
+        <div class="flex justify-between items-center">
+            <div>
+                <span class="text-gray-500 text-sm">Talla:</span>
+                <span class="font-medium ml-1">XL</span>
+            </div>
+            <div class="text-right">
+                <p class="text-gray-900 font-bold text-lg">$450.00</p>
+            </div>
+        </div>
+
+        <!-- 🔹 Botones funcionales -->
+        <div class="mt-3 flex flex-col gap-2">
+            <!-- Ver detalles -->
+            <button
+                class="view-details w-full bg-gray-200 text-gray-800 py-2 rounded-md hover:bg-gray-300 transition"
+                data-name="Hoodie Supreme Box Logo Black"
+                data-price="450.00"
+                data-image="https://storage.googleapis.com/workspace-0f70711f-8b4e-4d94-86f1-2a93ccde5887/image/c35de0a2-21a1-4281-849e-b3e7361be10b.png"
+                data-size="XL"
+                data-condition="NUEVO"
+                data-location="Reino Unido"
+                data-date="Publicado hace 5 días"
+                data-description="Hoodie Supreme Box Logo en color negro, edición clásica con logo bordado. Material de algodón premium, talla XL. Producto nuevo y original con envío desde Reino Unido."
+            >
+                Ver detalles
+            </button>
+
+            <!-- Añadir al carrito -->
+            <button
+                class="add-to-cart w-full bg-blue-600 text-white py-2 rounded-md hover:bg-blue-700 transition"
+                data-name="Hoodie Supreme Box Logo Black"
+                data-price="450.00"
+                data-image="https://storage.googleapis.com/workspace-0f70711f-8b4e-4d94-86f1-2a93ccde5887/image/c35de0a2-21a1-4281-849e-b3e7361be10b.png"
+                data-size="XL"
+                data-condition="NUEVO"
+            >
+                Añadir al carrito
+            </button>
+        </div>
+    </div>
+</div>
+                
+                <!-- Clothing Card 2 -->
+                <div class="product-card bg-white rounded-lg overflow-hidden shadow-md transition duration-300">
+    <div class="relative">
+        <img
+            src="https://storage.googleapis.com/workspace-0f70711f-8b4e-4d94-86f1-2a93ccde5887/image/6772274f-5690-4ab6-b17c-a8d45068bd40.png"
+            alt="Pantalones cargo Nike ACG en color beige, modelo usado pero en buen estado, fotografías detalladas"
+            class="w-full h-64 object-cover"
+        >
+        <span class="absolute bottom-2 left-2 condition-used text-white text-xs px-2 py-1 rounded-full">
+            USADO
+        </span>
+    </div>
+
+    <div class="p-4">
+        <div class="flex justify-between items-start mb-2">
+            <h3 class="font-bold text-lg text-gray-800">
+                Nike ACG Cargo Pants Beige
+            </h3>
+            <img
+                src="https://storage.googleapis.com/workspace-0f70711f-8b4e-4d94-86f1-2a93ccde5887/image/c68584f3-1c51-480a-b588-5915ae881101.png"
+                alt="Bandera de Argentina"
+                class="country-flag"
+            >
+        </div>
+
+        <p class="text-gray-600 text-sm mb-3">
+            Publicado ayer
+        </p>
+
+        <div class="flex items-center mb-3">
+            <div class="flex text-yellow-400">
+                <i class="fas fa-star"></i>
+                <i class="fas fa-star"></i>
+                <i class="fas fa-star"></i>
+                <i class="fas fa-star-half-alt"></i>
+                <i class="far fa-star"></i>
+            </div>
+            <span class="text-gray-600 text-sm ml-1">(6)</span>
+        </div>
+
+        <div class="flex justify-between items-center">
+            <div>
+                <span class="text-gray-500 text-sm">Talla:</span>
+                <span class="font-medium ml-1">M</span>
+            </div>
+            <div class="text-right">
+                <span class="text-gray-500 text-sm line-through">$120.00</span>
+                <p class="text-red-600 font-bold text-lg">$90.00</p>
+            </div>
+        </div>
+
+        <!-- 🔹 Botones funcionales -->
+        <div class="mt-3 flex flex-col gap-2">
+            <!-- Ver detalles -->
+            <button
+                class="view-details w-full bg-gray-200 text-gray-800 py-2 rounded-md hover:bg-gray-300 transition"
+                data-name="Nike ACG Cargo Pants Beige"
+                data-price="90.00"
+                data-image="https://storage.googleapis.com/workspace-0f70711f-8b4e-4d94-86f1-2a93ccde5887/image/6772274f-5690-4ab6-b17c-a8d45068bd40.png"
+                data-size="M"
+                data-condition="USADO"
+                data-location="Argentina"
+                data-date="Publicado ayer"
+                data-description="Pantalones cargo Nike ACG en color beige, modelo resistente y cómodo ideal para actividades al aire libre. Estado usado pero en excelentes condiciones. Envío gratuito a toda Argentina."
+            >
+                Ver detalles
+            </button>
+
+            <!-- Añadir al carrito -->
+            <button
+                class="add-to-cart w-full bg-blue-600 text-white py-2 rounded-md hover:bg-blue-700 transition"
+                data-name="Nike ACG Cargo Pants Beige"
+                data-price="90.00"
+                data-image="https://storage.googleapis.com/workspace-0f70711f-8b4e-4d94-86f1-2a93ccde5887/image/6772274f-5690-4ab6-b17c-a8d45068bd40.png"
+                data-size="M"
+                data-condition="USADO"
+            >
+                Añadir al carrito
+            </button>
+        </div>
+    </div>
+</div>
+                
+                <!-- Clothing Card 3 -->
+                <div class="product-card bg-white rounded-lg overflow-hidden shadow-md transition duration-300">
+    <div class="relative">
+        <img
+            src="https://storage.googleapis.com/workspace-0f70711f-8b4e-4d94-86f1-2a93ccde5887/image/2d90336d-58d9-499f-bba8-e87c830643a9.png"
+            alt="Chaqueta bomber Adidas Originals en azul marino con rayas blancas, fotografía en perfil"
+            class="w-full h-64 object-cover"
+        >
+        <span class="absolute top-2 right-2 bg-red-100 text-red-800 text-xs px-2 py-1 rounded-full">
+            OFERTA
+        </span>
+        <span class="absolute bottom-2 left-2 condition-used text-white text-xs px-2 py-1 rounded-full">
+            USADO
+        </span>
+    </div>
+
+    <div class="p-4">
+        <div class="flex justify-between items-start mb-2">
+            <h3 class="font-bold text-lg text-gray-800">
+                Adidas Originals Bomber Jacket
+            </h3>
+            <img
+                src="https://storage.googleapis.com/workspace-0f70711f-8b4e-4d94-86f1-2a93ccde5887/image/148f82a8-8817-4325-b2dc-216023e079d4.png"
+                alt="Bandera de México"
+                class="country-flag"
+            >
+        </div>
+
+        <p class="text-gray-600 text-sm mb-3">
+            Publicado hace 3 días
+        </p>
+
+        <div class="flex items-center mb-3">
+            <div class="flex text-yellow-400">
+                <i class="fas fa-star"></i>
+                <i class="fas fa-star"></i>
+                <i class="fas fa-star"></i>
+                <i class="fas fa-star"></i>
+                <i class="fas fa-star"></i>
+            </div>
+            <span class="text-gray-600 text-sm ml-1">(19)</span>
+        </div>
+
+        <div class="flex justify-between items-center">
+            <div>
+                <span class="text-gray-500 text-sm">Talla:</span>
+                <span class="font-medium ml-1">L</span>
+            </div>
+            <div class="text-right">
+                <span class="text-gray-500 text-sm line-through">$130.00</span>
+                <p class="text-red-600 font-bold text-lg">$95.00</p>
+            </div>
+        </div>
+
+        <!-- 🔹 Botones funcionales -->
+        <div class="mt-3 flex flex-col gap-2">
+            <!-- Ver detalles -->
+            <button
+                class="view-details w-full bg-gray-200 text-gray-800 py-2 rounded-md hover:bg-gray-300 transition"
+                data-name="Adidas Originals Bomber Jacket"
+                data-price="95.00"
+                data-image="https://storage.googleapis.com/workspace-0f70711f-8b4e-4d94-86f1-2a93ccde5887/image/2d90336d-58d9-499f-bba8-e87c830643a9.png"
+                data-size="L"
+                data-condition="USADO"
+                data-location="México"
+                data-date="Publicado hace 3 días"
+                data-description="Chaqueta bomber Adidas Originals en azul marino con rayas blancas en las mangas. Diseño clásico con cremallera y bolsillos laterales. Estado usado pero muy bien cuidado. Oferta especial disponible."
+            >
+                Ver detalles
+            </button>
+
+            <!-- Añadir al carrito -->
+            <button
+                class="add-to-cart w-full bg-blue-600 text-white py-2 rounded-md hover:bg-blue-700 transition"
+                data-name="Adidas Originals Bomber Jacket"
+                data-price="95.00"
+                data-image="https://storage.googleapis.com/workspace-0f70711f-8b4e-4d94-86f1-2a93ccde5887/image/2d90336d-58d9-499f-bba8-e87c830643a9.png"
+                data-size="L"
+                data-condition="USADO"
+            >
+                Añadir al carrito
+            </button>
+        </div>
+    </div>
+</div>
+                
+                <!-- Clothing Card 4 -->
+                <div class="product-card bg-white rounded-lg overflow-hidden shadow-md transition duration-300">
+    <div class="relative">
+        <img
+            src="https://storage.googleapis.com/workspace-0f70711f-8b4e-4d94-86f1-2a93ccde5887/image/3e64d4c6-0149-40ef-8465-fbbec9de6117.png"
+            alt="Camiseta vintage Nike retro de los años 90 con gráficos coloridos, fotografía plana"
+            class="w-full h-64 object-cover"
+        >
+        <span class="absolute top-2 right-2 condition-new text-white text-xs px-2 py-1 rounded-full">
+            NUEVO
+        </span>
+    </div>
+
+    <div class="p-4">
+        <div class="flex justify-between items-start mb-2">
+            <h3 class="font-bold text-lg text-gray-800">
+                Nike Vintage Retro T-Shirt 90s
+            </h3>
+            <img
+                src="https://storage.googleapis.com/workspace-0f70711f-8b4e-4d94-86f1-2a93ccde5887/image/924daa87-321b-47e1-9eb7-f07904e69034.png"
+                alt="Bandera de Francia"
+                class="country-flag"
+            >
+        </div>
+
+        <p class="text-gray-600 text-sm mb-3">
+            Publicado hoy
+        </p>
+
+        <div class="flex items-center mb-3">
+            <div class="flex text-yellow-400">
+                <i class="fas fa-star"></i>
+                <i class="fas fa-star"></i>
+                <i class="fas fa-star"></i>
+                <i class="fas fa-star-half-alt"></i>
+                <i class="far fa-star"></i>
+            </div>
+            <span class="text-gray-600 text-sm ml-1">(5)</span>
+        </div>
+
+        <div class="flex justify-between items-center">
+            <div>
+                <span class="text-gray-500 text-sm">Talla:</span>
+                <span class="font-medium ml-1">S</span>
+            </div>
+            <div class="text-right">
+                <p class="text-gray-900 font-bold text-lg">$65.00</p>
+            </div>
+        </div>
+
+        <!-- 🔹 Botones funcionales -->
+        <div class="mt-3 flex flex-col gap-2">
+            <!-- Ver detalles -->
+            <button
+                class="view-details w-full bg-gray-200 text-gray-800 py-2 rounded-md hover:bg-gray-300 transition"
+                data-name="Nike Vintage Retro T-Shirt 90s"
+                data-price="65.00"
+                data-image="https://storage.googleapis.com/workspace-0f70711f-8b4e-4d94-86f1-2a93ccde5887/image/3e64d4c6-0149-40ef-8465-fbbec9de6117.png"
+                data-size="S"
+                data-condition="NUEVO"
+                data-location="Francia"
+                data-date="Publicado hoy"
+                data-description="Camiseta Nike Vintage de los años 90, diseño retro con gráficos coloridos y estilo clásico. Producto nuevo en excelente estado, talla S. Envío disponible desde Francia."
+        >
+                Ver detalles
+            </button>
+            <!-- Añadir al carrito -->
+            <button
+                    class="add-to-cart w-full bg-blue-600 text-white py-2 rounded-md hover:bg-blue-700 transition"
+                    data-name="Nike Vintage Retro T-Shirt 90s"
+                    data-price="65.00"
+                    data-image="https://storage.googleapis.com/workspace-0f70711f-8b4e-4d94-86f1-2a93ccde5887/image/3e64d4c6-0149-40ef-8465-fbbec9de6117.png"
+                    data-size="S"
+                    data-condition="NUEVO"
+                    >
+                    Añadir al carrito
+                </button>
+            </div>
+        </div>
+    </div>
+    </section>
+
+    <!-- Sell Section -->
+    <section id="sell" class="py-16 bg-gray-100">
+        <div class="container mx-auto px-4">
+            <div class="max-w-4xl mx-auto bg-white rounded-xl shadow-md overflow-hidden">
+                <div class="md:flex">
+                    <div class="md:w-1/2 bg-blue-600 text-white p-10 flex flex-col justify-center">
+                        <h2 class="text-3xl font-bold mb-4">Vende tus productos en Sneaker World</h2>
+                        <p class="mb-6">Únete a nuestra comunidad global de más de 500,000 compradores y vendedores de zapatillas y ropa deportiva.</p>
+                        <ul class="space-y-3">
+                            <li class="flex items-start">
+                                <i class="fas fa-check-circle mt-1 mr-2"></i>
+                                <span>Llega a compradores en más de 50 países</span>
+                            </li>
+                            <li class="flex items-start">
+                                <i class="fas fa-check-circle mt-1 mr-2"></i>
+                                <span>Sistema seguro de pagos internacionales</span>
+                            </li>
+                            <li class="flex items-start">
+                                <i class="fas fa-check-circle mt-1 mr-2"></i>
+                                <span>Publicación de productos en minutos</span>
+                            </li>
+                            <li class="flex items-start">
+                                <i class="fas fa-check-circle mt-1 mr-2"></i>
+                                <span>Soporte para múltiples monedas</span>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="md:w-1/2 p-10">
+                        <h3 class="text-2xl font-bold text-gray-800 mb-6">Publicar nuevo producto</h3>
+                        <form class="space-y-4">
+                            <div>
+                                <label class="block text-gray-700 text-sm font-bold mb-2" for="product-name">Nombre del Producto</label>
+                                <input type="text" id="product-name" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                            </div>
+                            
+                            <div>
+                                <label class="block text-gray-700 text-sm font-bold mb-2">Categoría</label>
+                                <select class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                    <option value="">Seleccione</option>
+                                    <option value="sneakers">Zapatillas</option>
+                                    <option value="clothing">Ropa</option>
+                                    <option value="accessories">Accesorios</option>
+                                </select>
+                            </div>
+                            
+                            <div class="grid grid-cols-2 gap-4">
+                                <div>
+                                    <label class="block text-gray-700 text-sm font-bold mb-2">Condición</label>
+                                    <select class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                        <option value="new">Nuevo</option>
+                                        <option value="used">Usado</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label class="block text-gray-700 text-sm font-bold mb-2">Tamaño/Talle</label>
+                                    <input type="text" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                </div>
+                            </div>
+                            
+                            <div>
+                                <label class="block text-gray-700 text-sm font-bold mb-2">Precio (USD)</label>
+                                <input type="number" step="0.01" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                            </div>
+                            
+                            <div>
+                                <label class="block text-gray-700 text-sm font-bold mb-2">Ubicación</label>
+                                <select class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                    <option value="">Seleccione país</option>
+                                    <option value="us">Estados Unidos</option>
+                                    <option value="uk">Reino Unido</option>
+                                    <option value="de">Alemania</option>
+                                    <option value="jp">Japón</option>
+                                    <option value="ar">Argentina</option>
+                                    <option value="mx">México</option>
+                                    <option value="es">España</option>
+                                    <option value="other">Otro</option>
+                                </select>
+                            </div>
+                            
+                            <div>
+                                <label class="block text-gray-700 text-sm font-bold mb-2">Descripción</label>
+                                <textarea rows="4" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"></textarea>
+                            </div>
+                            
+                            <div>
+                                <label class="block text-gray-700 text-sm font-bold mb-2">Subir imágenes (máx. 5)</label>
+                                <div class="border-2 border-dashed border-gray-300 rounded-md p-4 text-center">
+                                    <i class="fas fa-cloud-upload-alt text-gray-400 text-3xl mb-2"></i>
+                                    <p class="text-gray-500">Arrastra y suelta imágenes aquí o haz clic para seleccionar</p>
+                                </div>
+                            </div>
+                            
+                            <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 text-white py-3 px-4 rounded-md font-bold transition">
+                                Publicar Producto
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Testimonials -->
+    <section class="py-16 bg-gray-900 text-white">
+        <div class="container mx-auto px-4">
+            <h2 class="text-3xl font-bold text-center mb-12">Lo que dicen nuestros usuarios</h2>
+            
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <div class="bg-gray-800 p-6 rounded-lg">
+                    <div class="flex items-center mb-4">
+                        <img src="https://storage.googleapis.com/workspace-0f70711f-8b4e-4d94-86f1-2a93ccde5887/image/71190c88-0aed-4256-ba79-79375b55296c.png" alt="Retrato de Javier, hombre joven sonriente con gafas y pelo corto" class="w-12 h-12 rounded-full mr-4">
+                        <div>
+                            <h4 class="font-bold">Javier R.</h4>
+                            <div class="flex text-yellow-400 text-sm">
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                            </div>
+                        </div>
+                    </div>
+                    <p class="text-gray-300">"Compré unas Air Jordan 1 desde Japón en perfecto estado y a muy buen precio. El vendedor fue muy profesional y el envío llegó antes de lo esperado. ¡Totalmente recomendado!"</p>
+                </div>
+                
+                <div class="bg-gray-800 p-6 rounded-lg">
+                    <div class="flex items-center mb-4">
+                        <img src="https://storage.googleapis.com/workspace-0f70711f-8b4e-4d94-86f1-2a93ccde5887/image/c181e395-0bab-468f-9f2e-55e11365b808.png" alt="Retrato de Sofía, mujer joven con pelo largo y sonrisa cálida" class="w-12 h-12 rounded-full mr-4">
+                        <div>
+                            <h4 class="font-bold">Sofía M.</h4>
+                            <div class="flex text-yellow-400 text-sm">
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                            </div>
+                        </div>
+                    </div>
+                    <p class="text-gray-300">"He vendido más de 30 pares de zapatillas en los últimos meses. La plataforma es muy fácil de usar y me ha permitido conectar con compradores de todo el mundo. ¡Excelente experiencia!"</p>
+                </div>
+                
+                <div class="bg-gray-800 p-6 rounded-lg">
+                    <div class="flex items-center mb-4">
+                        <img src="https://storage.googleapis.com/workspace-0f70711f-8b4e-4d94-86f1-2a93ccde5887/image/9acc8b57-ff33-48c5-98e9-54bd3812fc28.png" alt="Retrato de David, hombre maduro con barba y expresión seria" class="w-12 h-12 rounded-full mr-4">
+                        <div>
+                            <h4 class="font-bold">David L.</h4>
+                            <div class="flex text-yellow-400 text-sm">
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star-half-alt"></i>
+                            </div>
+                        </div>
+                    </div>
+                    <p class="text-gray-300">"Como coleccionista de sneakers, encontrar algunas ediciones limitadas era muy difícil hasta que descubrí Sneaker World. Ahora puedo comprar y vender con coleccionistas de todo el planeta de forma segura."</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- About Section -->
+    <section id="about" class="py-16 bg-white">
+        <div class="container mx-auto px-4">
+            <div class="text-center max-w-3xl mx-auto mb-12">
+                <h2 class="text-3xl font-bold text-gray-800 mb-4">Sobre Sneaker World</h2>
+                <p class="text-gray-600">Conectamos a amantes de las zapatillas y la ropa deportiva en más de 50 países, facilitando transacciones seguras y globales desde 2018.</p>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <div class="text-center">
+                    <div class="bg-blue-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <i class="fas fa-globe text-blue-600 text-2xl"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-800 mb-2">Mercado Global</h3>
+                    <p class="text-gray-600">Accede a productos de todo el mundo y vende a una audiencia internacional con nuestro sistema de envíos y pagos integrado.</p>
+                </div>
+                
+                <div class="text-center">
+                    <div class="bg-blue-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <i class="fas fa-shield-alt text-blue-600 text-2xl"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-800 mb-2">Compras Seguras</h3>
+                    <p class="text-gray-600">Protegemos tus transacciones con nuestro sistema de depósito en garantía y verificación de productos.</p>
+                </div>
+                
+                <div class="text-center">
+                    <div class="bg-blue-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <i class="fas fa-headset text-blue-600 text-2xl"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-800 mb-2">Soporte Multilingüe</h3>
+                    <p class="text-gray-600">Nuestro equipo de soporte está disponible en 5 idiomas para ayudarte con cualquier pregunta o problema.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Newsletter -->
+    <section class="py-12 bg-gray-100">
+        <div class="container mx-auto px-4">
+            <div class="max-w-2xl mx-auto bg-white p-8 rounded-lg shadow-md text-center">
+                <h2 class="text-2xl font-bold text-gray-800 mb-2">Suscríbete a nuestro boletín</h2>
+                <p class="text-gray-600 mb-6">Recibe las últimas novedades, ofertas exclusivas y lanzamientos importantes en tu correo.</p>
+                
+                <form class="flex flex-col sm:flex-row gap-3 max-w-md mx-auto">
+                    <input type="email" placeholder="Tu email" class="flex-1 px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-md font-medium transition">
+                        Suscribirse
+                    </button>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    
+    <!-- Footer -->
+    <footer class="bg-gray-900 text-gray-400 py-12">
+        <div class="container mx-auto px-4">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
+                <div>
+                    <h3 class="text-white text-lg font-bold mb-4">
+                        <a href="#home" title="Volver a la página principal de Sneaker World">SNEAKER WORLD</a>
+                    </h3>
+                    <p class="mb-4">El marketplace global para sneakerheads y amantes de la ropa deportiva.</p>
+                    <div class="flex space-x-4">
+                        <a href="https://instagram.com" target="_blank" title="Visita nuestro Instagram" class="text-gray-400 hover:text-white">
+                            <i class="fab fa-instagram text-xl"></i>
+                        </a>
+                        <a href="https://twitter.com" target="_blank" title="Síguenos en Twitter" class="text-gray-400 hover:text-white">
+                            <i class="fab fa-twitter text-xl"></i>
+                        </a>
+                        <a href="https://facebook.com" target="_blank" title="Visita nuestra página de Facebook" class="text-gray-400 hover:text-white">
+                            <i class="fab fa-facebook-f text-xl"></i>
+                        </a>
+                    </div>
+                </div>
+                
+                <div>
+                    <h3 class="text-white text-lg font-bold mb-4">
+                        <a href="#sneakers" title="Explorar zapatillas disponibles">COMPRAR</a>
+                    </h3>
+                    <ul class="space-y-2">
+                        <li><a href="#sneakers" title="Ver zapatillas" class="hover:text-white">Zapatillas</a></li>
+                        <li><a href="#clothing" title="Explorar ropa" class="hover:text-white">Ropa</a></li>
+                        <li><a href="#accessories" title="Ver accesorios" class="hover:text-white">Accesorios</a></li>
+                        <li><a href="#sneakers" title="Descubre nuevos lanzamientos" class="hover:text-white">Nuevos Lanzamientos</a></li>
+                        <li><a href="#sneakers" title="Ver ofertas disponibles" class="hover:text-white">Ofertas</a></li>
+                    </ul>
+                </div>
+                
+                <div>
+                    <h3 class="text-white text-lg font-bold mb-4">
+                        <a href="#sell" title="Cómo vender tus productos">VENDER</a>
+                    </h3>
+                    <ul class="space-y-2">
+                        <li><a href="#sell" title="Aprende cómo vender" class="hover:text-white">Cómo vender</a></li>
+                        <li><a href="#sell" title="Ver tarifas de venta" class="hover:text-white">Tarifas</a></li>
+                        <li><a href="#sell" title="Conoce la guía de envíos" class="hover:text-white">Guía de envíos</a></li>
+                        <li><a href="#about" title="Consulta nuestra política de devoluciones" class="hover:text-white">Política de devoluciones</a></li>
+                        <li><a href="#about" title="Explora vendedores destacados" class="hover:text-white">Vendedores destacados</a></li>
+                    </ul>
+                </div>
+                
+                <div>
+                    <h3 class="text-white text-lg font-bold mb-4">
+                        <a href="#help" title="Centro de ayuda y contacto">AYUDA</a>
+                    </h3>
+                    <ul class="space-y-2">
+                        <li><a href="#help" title="Ir al centro de ayuda" class="hover:text-white">Centro de ayuda</a></li>
+                        <li><a href="#contact" title="Contáctanos" class="hover:text-white">Contacto</a></li>
+                        <li><a href="#faq" title="Preguntas frecuentes" class="hover:text-white">Preguntas frecuentes</a></li>
+                        <li><a href="#about" title="Ver términos y condiciones" class="hover:text-white">Términos y condiciones</a></li>
+                        <li><a href="#about" title="Leer política de privacidad" class="hover:text-white">Política de privacidad</a></li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="pt-8 border-t border-gray-800 text-center">
+                <p>© 2023 Sneaker World. Todos los derechos reservados. 
+                <a href="#home" class="text-white hover:text-blue-400 font-medium transition">Volver al inicio ↑</a></p>
+            </div>
+        </div>
+    </footer>
+
+
+    <script>
+        // Simple toggle for mobile menu (would be enhanced in production)
+        document.addEventListener('DOMContentLoaded', function() {
+            // Mobile menu toggle
+            const mobileMenuButton = document.querySelector('.md\\:hidden');
+            const mobileMenu = document.querySelector('.hidden.md\\:flex');
+            
+            mobileMenuButton.addEventListener('click', function() {
+                mobileMenu.classList.toggle('hidden');
+                mobileMenu.classList.toggle('flex');
+                mobileMenu.classList.toggle('flex-col');
+                mobileMenu.classList.toggle('absolute');
+                mobileMenu.classList.toggle('top-16');
+                mobileMenu.classList.toggle('left-0');
+                mobileMenu.classList.toggle('right-0');
+                mobileMenu.classList.toggle('bg-white');
+                mobileMenu.classList.toggle('p-4');
+            });
+            
+            // Currency conversion example (simplified)
+            document.querySelectorAll('.product-card').forEach(card => {
+                card.addEventListener('click', function(e) {
+                    // Don't trigger if clicking on buttons inside card
+                    if (!e.target.closest('button')) {
+                        const viewBtn = this.querySelector('.view-details');
+                        if (viewBtn) viewBtn.click();
+                    }
+                });
+            });
+        });
+
+        // Product detail modal functionality
+        document.querySelectorAll('.view-details').forEach(button => {
+            button.addEventListener('click', () => {
+                const modal = document.getElementById('product-modal');
+                document.getElementById('modal-product-name').textContent = button.dataset.name;
+                document.getElementById('modal-product-image').src = button.dataset.image;
+                document.getElementById('modal-product-image').alt = button.dataset.name;
+                
+                // Update thumbnails
+                const thumbs = document.querySelectorAll('#product-modal .grid.grid-cols-4 img');
+                thumbs[0].src = button.dataset.image1 || button.dataset.image;
+                thumbs[1].src = button.dataset.image2 || button.dataset.image;
+                thumbs[2].src = button.dataset.image3 || button.dataset.image;
+                thumbs[3].src = button.dataset.image4 || button.dataset.image;
+                document.getElementById('modal-product-condition').textContent = button.dataset.condition;
+                document.getElementById('modal-product-size').textContent = button.dataset.size;
+                document.getElementById('modal-product-location').textContent = button.dataset.location;
+                document.getElementById('modal-product-date').textContent = button.dataset.date;
+                document.getElementById('modal-product-price').textContent = `${button.dataset.price}`;
+                document.getElementById('modal-product-description').textContent = button.dataset.description;
+                
+                // Update add to cart button in modal
+                const modalAddBtn = document.querySelector('#product-modal .add-to-cart');
+                modalAddBtn.dataset.name = button.dataset.name;
+                modalAddBtn.dataset.price = button.dataset.price;
+                modalAddBtn.dataset.image = button.dataset.image;
+                modalAddBtn.dataset.size = button.dataset.size;
+                modalAddBtn.dataset.condition = button.dataset.condition;
+                
+                modal.classList.remove('hidden');
+            });
+        });
+
+        document.getElementById('close-product-modal').addEventListener('click', () => {
+            document.getElementById('product-modal').classList.add('hidden');
+        });
+
+        // Close modal when clicking outside content
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                document.getElementById('product-modal').classList.add('hidden');
+            }
+        });
+    </script>
+
+    <div id="product-modal" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-white rounded-lg p-6 w-full max-w-4xl max-h-[90vh] overflow-y-auto">
+            <div class="flex justify-between items-start mb-4">
+                <h3 id="modal-product-name" class="text-2xl font-bold"></h3>
+                <button id="close-product-modal" class="text-gray-500 hover:text-gray-700">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div class="space-y-4">
+                    <img id="modal-product-image" src="" alt="" class="w-full rounded-lg"> 
+                    <div class="grid grid-cols-4 gap-2">
+                        <img src="https://storage.googleapis.com/workspace-0f70711f-8b4e-4d94-86f1-2a93ccde5887/image/a674ed3c-9125-4706-934e-b709e07abd9f.png" alt="" class="cursor-pointer border-2 border-transparent hover:border-blue-500 rounded">
+                        <img src="https://storage.googleapis.com/workspace-0f70711f-8b4e-4d94-86f1-2a93ccde5887/image/00e93f89-8ded-4980-9dbc-b1352ce68b8c.png" alt="" class="cursor-pointer border-2 border-transparent hover:border-blue-500 rounded">
+                        <img src="https://storage.googleapis.com/workspace-0f70711f-8b4e-4d94-86f1-2a93ccde5887/image/9e0e6e7b-0c77-428a-9cdc-d04e769c713c.png" alt="" class="cursor-pointer border-2 border-transparent hover:border-blue-500 rounded">
+                        <img src="https://storage.googleapis.com/workspace-0f70711f-8b4e-4d94-86f1-2a93ccde5887/image/44c5b2d4-ab6e-4d8c-b77a-e8a01cf42108.png" alt="" class="cursor-pointer border-2 border-transparent hover:border-blue-500 rounded">
+                    </div>
+                </div>
+                <div>
+                    <div class="flex items-center mb-4">
+                        <div class="flex text-yellow-400 mr-2">
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="far fa-star"></i>
+                        </div>
+                        <span class="text-gray-600">(24 reseñas)</span>
+                    </div>
+                    <div class="mb-4">
+                        <span class="text-gray-500">Condición:</span>
+                        <span id="modal-product-condition" class="ml-2 font-medium"></span>
+                    </div>
+                    <div class="mb-4">
+                        <span class="text-gray-500">Talle:</span>
+                        <span id="modal-product-size" class="ml-2 font-medium"></span>
+                    </div>
+                    <div class="mb-4">
+                        <span class="text-gray-500">Ubicación:</span>
+                        <span id="modal-product-location" class="ml-2 font-medium"></span>
+                    </div>
+                    <div class="mb-6">
+                        <span class="text-gray-500">Publicado:</span>
+                        <span id="modal-product-date" class="ml-2 font-medium"></span>
+                    </div>
+                    <div class="text-3xl font-bold mb-6" id="modal-product-price"></div>
+                    <p class="text-gray-700 mb-6" id="modal-product-description"></p>
+                    <button class="add-to-cart w-full bg-blue-600 text-white py-3 rounded-md font-bold hover:bg-blue-700 transition"
+                        data-name="Converse Chuck 70s High Top Black" data-price="80.00" data-image="https://storage.googleapis.com/workspace-0f70711f-8b4e-4d94-86f1-2a93ccde5887/image/3bcabda7-7220-4058-8432-9a54e2c2436d.png" data-size="39" data-condition="USADO">
+                        Añadir al carrito
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="checkout-modal" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden flex items-center justify-center overflow-y-auto">
+        <div class="bg-white rounded-lg p-6 w-full max-w-md my-10 max-h-[90vh] overflow-y-auto">
+            <div class="flex justify-between items-center mb-4">
+                <h3 class="text-xl font-bold">Finalizar Compra</h3>
+                <button id="close-modal" class="text-gray-500 hover:text-gray-700">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            
+            <div id="checkout-summary" class="mb-6">
+                <!--Items will be inserted here-->
+            </div>
+            
+            <div class="border-t border-gray-200 pt-4 mb-6">
+                <div class="flex justify-between mb-2">
+                    <span>Subtotal</span>
+                    <span id="subtotal">$0.00</span>
+                </div>
+                <div class="flex justify-between mb-2">
+                    <span>Envío</span>
+                    <span id="shipping">$15.00</span>
+                </div>
+                <div class="flex justify-between text-lg font-bold">
+                    <span>Total</span>
+                    <span id="total">$0.00</span>
+                </div>
+            </div>
+            
+            <form class="space-y-4">
+                <div>
+                    <label class="block text-gray-700 mb-2">Método de pago</label>
+                    <select class="w-full px-3 py-2 border border-gray-300 rounded-md">
+                        <option>Tarjeta de crédito</option>
+                        <option>PayPal</option>
+                        <option>Transferencia bancaria</option>
+                    </select>
+                </div>
+                <button type="submit" class="w-full bg-blue-600 text-white py-3 rounded-md font-bold">
+                    Confirmar Pago
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <body>
+  <!--LISTA DE PRODUCTOS-->
+
+    <button 
+      class="add-to-cart" 
+      data-name="Zapatilla Converse" 
+      data-price="50" 
+      data-image="./fotos zapatillaz/convers.png"
+      data-size="39" 
+      data-condition="Nuevo">
+    </button>
+  </div>
+
+  
+    
+</section>
+
+
+
+<!-- MODAL DE CHECKOUT -->
+<div id="checkout-modal" class="hidden">
+  <h2>Resumen de compra</h2>
+  <div id="checkout-summary"></div>
+  <p>Subtotal: $<span id="subtotal">0.00</span></p>
+  <p>Envío: $<span id="shipping">15.00</span></p>
+  <p>Total: $<span id="total">0.00</span></p>
+  <button id="close-modal">Cerrar</button>
+</div>
+
+<!-- SCRIPT -->
+<script>
+let cart = [];
+
+document.querySelectorAll('.add-to-cart').forEach(button => {
+  button.addEventListener('click', () => {
+    const name = button.dataset.name;
+    const price = parseFloat(button.dataset.price);
+    const image = button.dataset.image; 
+    const size = button.dataset.size;
+    const condition = button.dataset.condition;
+
+    const existingItem = cart.find(item =>
+      item.name === name &&
+      item.size === size &&
+      item.condition === condition
+    );
+
+    if (existingItem) {
+      existingItem.quantity += 1;
+    } else {
+      cart.push({ name, price, image, size, condition, quantity: 1 });
+    }
+
+    updateCart();
+  });
+});
+
+// Actualizar carrito
+function updateCart() {
+  const totalQuantity = cart.reduce((sum, item) => sum + item.quantity, 0);
+  document.getElementById('cart-count').textContent = totalQuantity;
+
+  const cartItems = document.getElementById('cart-items');
+  const cartTotal = document.getElementById('cart-total');
+
+  if (cart.length === 0) {
+    cartItems.innerHTML = '<p class="text-gray-500 text-center py-4">Tu carrito está vacío</p>';
+    cartTotal.textContent = '$0.00';
+    return;
+  }
+
+  let itemsHTML = '';
+  let total = 0;
+
+  cart.forEach(item => {
+    itemsHTML += `
+      <div class="flex items-center py-3 border-b border-gray-100">
+        <img src="${item.image}" alt="${item.name}" 
+             class="w-8 h-8 rounded object-cover mr-2" 
+             onerror="this.src='https://via.placeholder.com/32?text=No+Img'" />
+        <div class="flex-1">
+          <p class="text-sm font-medium">${item.name}</p>
+          <p class="text-xs text-gray-500">Talle: ${item.size} | ${item.condition}</p>
+          <p class="text-xs text-gray-500">Cantidad: ${item.quantity}</p>
+        </div>
+        <p class="text-sm font-bold">$${(item.price * item.quantity).toFixed(2)}</p>
+      </div>
+    `;
+    total += item.price * item.quantity;
+  });
+
+  cartItems.innerHTML = itemsHTML;
+  cartTotal.textContent = `$${total.toFixed(2)}`;
+}
+
+// Checkout
+document.getElementById('checkout-btn').addEventListener('click', () => {
+  document.getElementById('checkout-modal').classList.remove('hidden');
+
+  const checkoutSummary = document.getElementById('checkout-summary');
+  const subtotal = document.getElementById('subtotal');
+  const shipping = document.getElementById('shipping');
+  const total = document.getElementById('total');
+
+  let itemsHTML = '';
+  let sum = 0;
+
+  cart.forEach(item => {
+    itemsHTML += `
+      <div class="flex items-center py-3 border-b border-gray-100">
+        <img src="${item.image}" alt="${item.name}" 
+             class="w-12 h-12 rounded object-cover mr-3">
+        <div class="flex-1">
+          <p class="text-sm font-medium">${item.name}</p>
+          <p class="text-xs text-gray-500">Talle: ${item.size} | Cantidad: ${item.quantity}</p>
+        </div>
+        <p class="text-sm font-bold">$${(item.price * item.quantity).toFixed(2)}</p>
+      </div>
+    `;
+    sum += item.price * item.quantity;
+  });
+
+  checkoutSummary.innerHTML = itemsHTML;
+  const shippingCost = 15.00;
+  subtotal.textContent = `${sum.toFixed(2)}`;
+  total.textContent = `${(sum + shippingCost).toFixed(2)}`;
+});
+
+document.getElementById('close-modal').addEventListener('click', () => {
+  document.getElementById('checkout-modal').classList.add('hidden');
+});
+</script>
+
+<!-- Secciones informativas -->
+<section id="zapatillas" class="bg-gray-900 text-gray-300 py-16 px-6">
+  <div class="max-w-4xl mx-auto text-center">
+    <h2 class="text-3xl font-bold text-white mb-6">Zapatillas</h2>
+    <p class="mb-4">En Sneaker World, ofrecemos una amplia colección de zapatillas nuevas y usadas de las marcas más reconocidas a nivel mundial. Nuestro catálogo incluye modelos exclusivos y ediciones limitadas difíciles de encontrar en el mercado tradicional.</p>
+    <p class="mb-4">Cada producto pasa por un proceso de verificación para garantizar su autenticidad, brindando seguridad tanto a compradores como a vendedores. Desde Nike hasta Adidas, pasando por New Balance y Jordan, tenemos el par ideal para cada estilo.</p>
+    <p>Explorá nuevas tendencias, descubrí sneakers icónicas y encontrá ofertas únicas de nuestra comunidad global de coleccionistas.</p>
+    <a href="#home" class="inline-block mt-6 bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-md font-medium transition">Volver al inicio ↑</a>
+  </div>
+</section>
+
+<section id="ropa" class="bg-gray-900 text-gray-300 py-16 px-6">
+  <div class="max-w-4xl mx-auto text-center">
+    <h2 class="text-3xl font-bold text-white mb-6">Ropa</h2>
+    <p class="mb-4">Nuestra sección de ropa reúne prendas urbanas, deportivas y de colección de las principales marcas internacionales. Desde hoodies Supreme hasta chaquetas Adidas Originals, encontrarás artículos únicos tanto nuevos como usados.</p>
+    <p class="mb-4">Cada publicación incluye fotos reales, descripción detallada y valoración del vendedor para ayudarte a tomar la mejor decisión de compra. Priorizamos la calidad y autenticidad de cada prenda disponible en nuestra plataforma.</p>
+    <p>Vestite con estilo y autenticidad con las mejores marcas del streetwear mundial, disponibles en un solo lugar.</p>
+    <a href="#home" class="inline-block mt-6 bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-md font-medium transition">Volver al inicio ↑</a>
+  </div>
+</section>
+
+<section id="vender" class="bg-gray-900 text-gray-300 py-16 px-6">
+  <div class="max-w-4xl mx-auto text-center">
+    <h2 class="text-3xl font-bold text-white mb-6">Cómo Vender</h2>
+    <p class="mb-4">Vender en Sneaker World es rápido y sencillo. Solo necesitás crear una cuenta, subir fotos de tu producto, completar la descripción y fijar el precio. Nuestro sistema de publicación te permite llegar a compradores en más de 50 países.</p>
+    <p class="mb-4">Contamos con un sistema de pago seguro y un servicio de envío internacional confiable que garantiza la protección de tus transacciones. Nuestro objetivo es que cada venta sea segura, eficiente y sin complicaciones.</p>
+    <p>Formá parte de nuestra comunidad de vendedores destacados y comenzá a generar ingresos con tus productos deportivos.</p>
+    <a href="#home" class="inline-block mt-6 bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-md font-medium transition">Volver al inicio ↑</a>
+  </div>
+</section>
+
+<section id="ayuda" class="bg-gray-900 text-gray-300 py-16 px-6">
+  <div class="max-w-4xl mx-auto text-center">
+    <h2 class="text-3xl font-bold text-white mb-6">Centro de Ayuda</h2>
+    <p class="mb-4">Nuestro centro de ayuda está diseñado para resolver todas tus dudas sobre compras, ventas, envíos y devoluciones. Aquí encontrarás guías paso a paso, artículos informativos y soporte en tiempo real a través de nuestros canales oficiales.</p>
+    <p class="mb-4">El equipo de Sneaker World trabaja constantemente para ofrecerte la mejor experiencia posible. Si algo no sale como esperabas, no dudes en contactarnos: estamos para ayudarte en todo momento.</p>
+    <p>Accedé también a nuestras preguntas frecuentes para resolver consultas rápidas y conocer mejor cómo funciona nuestra plataforma.</p>
+    <a href="#home" class="inline-block mt-6 bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-md font-medium transition">Volver al inicio ↑</a>
+  </div>
+</section>
+
+<section id="contacto" class="bg-gray-900 text-gray-300 py-16 px-6">
+  <div class="max-w-4xl mx-auto text-center">
+    <h2 class="text-3xl font-bold text-white mb-6">Contacto</h2>
+    <p class="mb-4">Podés comunicarte con nuestro equipo de soporte para resolver cualquier duda o inconveniente. Estamos disponibles de lunes a viernes de 9:00 a 18:00 (hora local) y respondemos la mayoría de las consultas en menos de 24 horas.</p>
+    <p class="mb-4">También podés escribirnos por redes sociales o a través del formulario en la sección “Centro de Ayuda”. Valoramos tu tiempo y trabajamos para brindarte respuestas rápidas y precisas.</p>
+    <p>Tu opinión nos ayuda a mejorar. No dudes en contactarnos ante cualquier sugerencia o consulta.</p>
+    <a href="#home" class="inline-block mt-6 bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-md font-medium transition">Volver al inicio ↑</a>
+  </div>
+</section>
+
+<script>
+  // --- Cerrar modal con la "X"
+  document.addEventListener("DOMContentLoaded", () => {
+    const closeModalBtn = document.getElementById("close-product-modal");
+    const productModal = document.getElementById("product-modal");
+
+    if (closeModalBtn && productModal) {
+      closeModalBtn.addEventListener("click", () => {
+        productModal.classList.add("hidden");
+      });
+    }
+  });
+</script>
+<!-- 🔹 MODAL DE REGISTRO / INICIO DE SESIÓN -->
+<div id="auth-modal" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden items-center justify-center p-4">
+    <div class="bg-white rounded-lg p-6 w-full max-w-md relative">
+      <h2 id="auth-title" class="text-2xl font-bold mb-4 text-center">Crear cuenta</h2>
+  
+      <form id="auth-form" class="space-y-4">
+        <div>
+          <label class="block text-gray-700 mb-1">Correo electrónico</label>
+          <input id="auth-email" type="email" required class="w-full px-3 py-2 border rounded-md focus:ring focus:ring-blue-500">
+        </div>
+        <div>
+          <label class="block text-gray-700 mb-1">Contraseña</label>
+          <input id="auth-password" type="password" required class="w-full px-3 py-2 border rounded-md focus:ring focus:ring-blue-500">
+        </div>
+        <button type="submit" class="w-full bg-blue-600 text-white py-2 rounded-md hover:bg-blue-700 transition">
+          Registrar
+        </button>
+      </form>
+  
+      <p class="text-center text-gray-600 mt-4">
+        <span id="toggle-auth" class="text-blue-600 cursor-pointer hover:underline">
+          ¿Ya tienes cuenta? Inicia sesión
+        </span>
+      </p>
+      <button id="close-auth" class="absolute top-4 right-4 text-gray-600 hover:text-gray-800">
+        <i class="fas fa-times"></i>
+      </button>
+    </div>
+  </div>
+  
+  <!-- 🔹 MENÚ DE USUARIO (se inserta dinámicamente al iniciar sesión) -->
+  <div id="user-menu" class="relative hidden">
+    <button id="user-name-btn" class="bg-gray-100 px-4 py-2 rounded-md flex items-center space-x-2 hover:bg-gray-200 transition">
+      <i class="fas fa-user text-gray-700"></i>
+      <span id="user-name-display" class="text-gray-700 font-medium"></span>
+      <i class="fas fa-chevron-down text-gray-500 text-sm"></i>
+    </button>
+  
+    <div id="dropdown-menu" class="absolute right-0 mt-2 bg-white rounded-md shadow-lg w-40 hidden">
+      <button id="logout-btn" class="block w-full text-left px-4 py-2 text-gray-700 hover:bg-gray-100">Cerrar sesión</button>
+    </div>
+  </div>
+  
+  <!-- 🔹 MODAL DE PAGO -->
+  <div id="payment-modal" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden flex items-center justify-center p-4">
+    <div class="bg-white rounded-lg p-6 w-full max-w-md relative">
+      <h3 class="text-xl font-bold mb-4 text-center">Método de Pago</h3>
+      <form id="payment-form" class="space-y-4">
+        <div>
+          <label class="block text-gray-700 mb-1">Nombre del titular</label>
+          <input id="card-name" type="text" required class="w-full px-3 py-2 border rounded-md focus:ring focus:ring-blue-500">
+        </div>
+        <div>
+          <label class="block text-gray-700 mb-1">Número de tarjeta</label>
+          <input id="card-number" type="text" maxlength="16" required class="w-full px-3 py-2 border rounded-md focus:ring focus:ring-blue-500">
+        </div>
+        <div class="grid grid-cols-2 gap-4">
+          <div>
+            <label class="block text-gray-700 mb-1">Expiración</label>
+            <input id="card-exp" type="text" placeholder="MM/AA" required class="w-full px-3 py-2 border rounded-md focus:ring focus:ring-blue-500">
+          </div>
+          <div>
+            <label class="block text-gray-700 mb-1">CVV</label>
+            <input id="card-cvv" type="text" maxlength="3" required class="w-full px-3 py-2 border rounded-md focus:ring focus:ring-blue-500">
+          </div>
+        </div>
+        <div>
+          <label class="block text-gray-700 mb-1">Dirección de envío</label>
+          <input id="address" type="text" required class="w-full px-3 py-2 border rounded-md focus:ring focus:ring-blue-500">
+        </div>
+        <button type="submit" class="w-full bg-blue-600 text-white py-2 rounded-md hover:bg-blue-700 transition">Confirmar Pago</button>
+      </form>
+      <button id="close-payment" class="absolute top-4 right-4 text-gray-600 hover:text-gray-800">
+        <i class="fas fa-times"></i>
+      </button>
+    </div>
+  </div>
+  
+  <!-- 🔹 CONFIRMACIÓN DE PAGO -->
+  <div id="confirmation-modal" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden flex items-center justify-center p-4">
+    <div class="bg-white rounded-lg p-6 w-full max-w-md text-center relative">
+      <h3 class="text-xl font-bold mb-4 text-green-600">¡Pago confirmado!</h3>
+      <p id="confirm-text" class="text-gray-700 mb-4"></p>
+      <button id="close-confirmation" class="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700">Cerrar</button>
+    </div>
+  </div>
+  
+  <script>
+    // === Variables principales ===
+    const authModal = document.getElementById("auth-modal");
+    const authTitle = document.getElementById("auth-title");
+    const toggleAuth = document.getElementById("toggle-auth");
+    const authForm = document.getElementById("auth-form");
+    const closeAuth = document.getElementById("close-auth");
+    const registerBtn = document.querySelector("button.bg-blue-600.text-white.px-4.py-2.rounded-md");
+    const userMenu = document.getElementById("user-menu");
+    const userNameDisplay = document.getElementById("user-name-display");
+    const userDropdown = document.getElementById("dropdown-menu");
+    const logoutBtn = document.getElementById("logout-btn");
+  
+    let isLogin = false;
+  
+    // === Mostrar modal de registro/login ===
+    registerBtn.addEventListener("click", () => {
+      authModal.classList.remove("hidden");
+    });
+  
+    toggleAuth.addEventListener("click", () => {
+      isLogin = !isLogin;
+      authTitle.textContent = isLogin ? "Iniciar sesión" : "Crear cuenta";
+      authForm.querySelector("button").textContent = isLogin ? "Iniciar sesión" : "Registrar";
+      toggleAuth.textContent = isLogin ? "¿No tienes cuenta? Regístrate" : "¿Ya tienes cuenta? Inicia sesión";
+    });
+  
+    closeAuth.addEventListener("click", () => authModal.classList.add("hidden"));
+  
+    // === Registro / Inicio de sesión ===
+    authForm.addEventListener("submit", e => {
+      e.preventDefault();
+      const email = document.getElementById("auth-email").value;
+      const pass = document.getElementById("auth-password").value;
+  
+      if (isLogin) {
+        const user = JSON.parse(localStorage.getItem("user"));
+        if (user && user.email === email && user.password === pass) {
+          iniciarSesion(user.email);
+          authModal.classList.add("hidden");
+        } else {
+          alert("Credenciales incorrectas");
+        }
+      } else {
+        const newUser = { email, password: pass };
+        localStorage.setItem("user", JSON.stringify(newUser));
+        iniciarSesion(email);
+        authModal.classList.add("hidden");
+      }
+    });
+  
+    // === Mostrar nombre de usuario y menú ===
+    function iniciarSesion(email) {
+      localStorage.setItem("loggedIn", "true");
+      localStorage.setItem("userEmail", email);
+  
+      registerBtn.classList.add("hidden");
+      userMenu.classList.remove("hidden");
+      userNameDisplay.textContent = email.split("@")[0];
+    }
+  
+    // === Cerrar sesión ===
+    logoutBtn.addEventListener("click", () => {
+      localStorage.removeItem("loggedIn");
+      localStorage.removeItem("userEmail");
+      userMenu.classList.add("hidden");
+      userDropdown.classList.add("hidden");
+      registerBtn.classList.remove("hidden");
+    });
+  
+    // === Dropdown del usuario ===
+    document.getElementById("user-name-btn").addEventListener("click", () => {
+      userDropdown.classList.toggle("hidden");
+    });
+  
+    // === Restaurar sesión si estaba iniciada ===
+    window.addEventListener("load", () => {
+      const loggedIn = localStorage.getItem("loggedIn");
+      const email = localStorage.getItem("userEmail");
+      if (loggedIn === "true" && email) iniciarSesion(email);
+    });
+  
+    // === MÉTODO DE PAGO ===
+    const paymentModal = document.getElementById("payment-modal");
+    const confirmationModal = document.getElementById("confirmation-modal");
+    const confirmText = document.getElementById("confirm-text");
+  
+    document.getElementById("checkout-btn").addEventListener("click", () => {
+      if (localStorage.getItem("loggedIn") === "true") {
+        paymentModal.classList.remove("hidden");
+      } else {
+        alert("Debes iniciar sesión antes de pagar");
+        authModal.classList.remove("hidden");
+      }
+    });
+  
+    document.getElementById("payment-form").addEventListener("submit", e => {
+      e.preventDefault();
+      const name = document.getElementById("card-name").value;
+      const address = document.getElementById("address").value;
+      paymentModal.classList.add("hidden");
+  
+      confirmText.textContent = `Gracias ${name}, tu pago fue procesado correctamente. Tu pedido será enviado a ${address}.`;
+      confirmationModal.classList.remove("hidden");
+    });
+  
+    document.getElementById("close-payment").addEventListener("click", () => paymentModal.classList.add("hidden"));
+    document.getElementById("close-confirmation").addEventListener("click", () => confirmationModal.classList.add("hidden"));
+  </script>
+  
+<body>
+</html>
+    
+
